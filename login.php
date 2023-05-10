@@ -1,4 +1,5 @@
 <?php
+session_start();
 include ('conn.php');
 include ('funcoes.php');
 if(isset($_POST["btnAcessar"])){
@@ -10,6 +11,8 @@ if(isset($_POST["btnAcessar"])){
     $result = mysqli_query($conn,$sqlLogin); 
     $quantReg = mysqli_num_rows($result);
     if($quantReg >0 ){
+        $_SESSION["usersist"]="$usuario";
+        $_SESSION["idUsuario"] = "1";
         header('location:index.php');
 
     }else
