@@ -1,10 +1,27 @@
 <?php
+session_start();
 include('conn.php');
 // echo "<script>alert('ok')</script>";
 //inclusão das funções
 include('funcoes.php');
 
+if (!isset($_SESSION["usuario"])) {
+  header('location:login.php?msg=userna');
+}
 
+//Finalizar tarefa
+if (isset($_GET["idfinalizar"])) {
+  $idfinalizar = $_GET["idfinalizar"];
+
+  $sqlFinalizar = "UPDATE tab_tarefas SET
+  statusTarefa='1' WHERE id='$idfinalizar'";
+
+  if (mysqli_query($conn, $sqlFinalizar)) {
+    header('Location:index.php?msg=finalizarok');
+  } else {
+    header('Location:index.php?msg=finalizarerro');
+  }
+}
 
 //Atualizar tarefa
 if (isset($_GET["btnAlterar"])) {
@@ -16,9 +33,9 @@ if (isset($_GET["btnAlterar"])) {
   ) {
 
     $nomeT = testar_valor($_GET["nometarefa"]);
-    $descT =testar_valor($_GET["descricao"]);
-    $dataT =testar_valor($_GET["datatarefa"]);
-    $priorT =testar_valor($_GET["prioridade"]);
+    $descT = testar_valor($_GET["descricao"]);
+    $dataT = testar_valor($_GET["datatarefa"]);
+    $priorT = testar_valor($_GET["prioridade"]);
     $idT = $_GET["idtarefa"];
 
     $sqlUpdate = "UPDATE tab_tarefas SET 
@@ -47,28 +64,34 @@ if (isset($_GET["idtarefaexc"])) {
   }
 }
 
+//id do usuario pego na sessão do login
+$id = $_SESSION["idusuario"];
+
+$statusT = (isset($_GET["tfin"])? 1 : 0);
 //Buscar Tarefa pela data
 if (isset($_GET["btnBuscar"])) {
   $dataT = $_GET["dataBuscar"];
   $sqlBuscar = "SELECT * FROM tab_tarefas 
-  WHERE prazoTarefa LIKE '$dataT%'";
+  WHERE prazoTarefa LIKE '$dataT%' 
+  and idUsuario='$id' and statusTarefa='$statusT'";
   $result = mysqli_query($conn, $sqlBuscar);
 } else {
   //Selecionar tarefas do banco - php
-  $sqlSelect = "SELECT * FROM tab_tarefas";
+  $sqlSelect = "SELECT * FROM tab_tarefas 
+  WHERE idUsuario='$id' and statusTarefa='$statusT' ";
   $result = mysqli_query($conn, $sqlSelect);
 }
 
-// paginação
-$pag = (isset($_GET["pagina"])? $_GET ["pagina"] : 1);
+//Paginação
+$pag = (isset($_GET["pagina"]) ? $_GET["pagina"] : 1);
 $quantReg = mysqli_num_rows($result);
 $quant_p_pag = 6;
 $quant_pag = ceil($quantReg / $quant_p_pag);
-// conta da paginação
-$inicio = ($quant_p_pag * $pag)-$quant_p_pag ;
-$sqlPag = "SELECT * FROM tab_tarefas LIMIT  $inicio,$quant_p_pag";
-$result = mysqli_query($conn,$sqlPag);
-
+$inicio = ($quant_p_pag * $pag) - $quant_p_pag;
+$sqlPag = "SELECT * FROM tab_tarefas 
+WHERE idUsuario='$id' and statusTarefa='$statusT'
+LIMIT $inicio,$quant_p_pag";
+$result = mysqli_query($conn, $sqlPag);
 
 ?>
 
@@ -109,7 +132,7 @@ $result = mysqli_query($conn,$sqlPag);
             <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
               <nav class="sb-sidenav-menu-nested nav">
                 <a class="nav-link" href="">Cadastro de Tarefas</a>
-                <a class="nav-link" href="">Tarefas concluídas</a>
+                <a class="nav-link" href="index.php?tfin">Tarefas concluídas </a>
               </nav>
             </div>
           </div>
@@ -161,13 +184,13 @@ $result = mysqli_query($conn,$sqlPag);
 
           <?php if (isset($_GET["msg"]) && $_GET["msg"] == "delok") { ?>
             <div class="alert alert-success" role="alert">
-              Tarefa Excluida !!! 
+              Tarefa Excluida !!!
             </div>
           <?php } ?>
 
           <?php if (isset($_GET["msg"]) && $_GET["msg"] == "delerro") { ?>
             <div class="alert alert-danger" role="alert">
-              Erro ao excluir Tarefa !!! 
+              Erro ao excluir Tarefa !!!
             </div>
           <?php } ?>
 
@@ -197,6 +220,7 @@ $result = mysqli_query($conn,$sqlPag);
               <?php while ($linha = mysqli_fetch_assoc($result)) {
                 $modalAtualizar = "modalAtualizar" . $linha["id"];
                 $modalDeletar = "modalDeletar" . $linha["id"];
+                $modalFinalizar = "modalFinalizar" . $linha["id"];
               ?>
                 <tr>
                   <th style="cursor:pointer" data-bs-toggle="modal" data-bs-target="#<?php echo $modalAtualizar ?>">
@@ -219,7 +243,7 @@ $result = mysqli_query($conn,$sqlPag);
                       ?></td>
                   <td>
                     <div class="form-check form-switch">
-                      <input class="form-check-input" type="checkbox" data-bs-toggle="modal" data-bs-target="#exampleModa2" role="switch" id="flexSwitchCheckChecked">
+                      <input class="form-check-input" type="checkbox" data-bs-toggle="modal" data-bs-target="#<?= $modalFinalizar ?>" role="switch" id="flexSwitchCheckChecked">
                       <label class="form-check-label" for="flexSwitchCheckChecked">Finalizar</label>
                     </div>
                   </td>
@@ -297,85 +321,84 @@ $result = mysqli_query($conn,$sqlPag);
                 </div>
 
 
+                <div class="modal fade" id="<?= $modalFinalizar ?>" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Finalizar Tarefa</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        Deseja finalizar esta tarefa?<?= $modalFinalizar ?>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" onclick="ZerarCheck()" class="btn btn-secondary" data-bs-dismiss="modal">Não</button>
+                        <a href="index.php?idfinalizar=<?= $linha["id"] ?>">
+                          <button type="button" class="btn btn-primary">Sim</button>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+
               <?php } ?>
             </tbody>
           </table>
-          
-          <!-- paginação dinamica -->
+
           <div class="container mt-5">
             <nav aria-label="Page navigation example">
               <ul class="pagination justify-content-center">
+
                 <?php
-                $pagAnterior = $pag -1;
-                if ($pagAnterior != 0){
+                $pagAnterior = $pag - 1;
 
+                if ($pagAnterior != 0) {
                 ?>
-                <li class= "page-item " >
-                  <a class="page-link" href="index.php?pagina=<?=$pagAnterior ?>" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                  </a>
-                </li>
-
-                <?php }else { ?>
-                   <li class="page-item ">
-                   <a class="page-link " href="#" aria-label="Previous">
-                     <span aria-hidden="true">&laquo;</span>
-                   </a>
-                 </li>
-               <?php } ?>
-
-                  
-
-                  <!-- deixar dinamica -->
-                <?php for($i = 1;$i <= $quant_pag; $i++){?>
-                <li class="page-item <?php if ($pag == $i) echo "active" ?>">
-                <a class="page-link" href="index.php?pagina=<?= $i ?>">
-                <?=$i?>
-              </a>
-              </li>
-              <?php }
-
-
-              $pagPost = $pag + 1;
-              if($pagPost <= $quant_pag){
-                ?>
-                   <li class="page-item">
-                  <a class="page-link" href="index.php?pagina=<?=$pagPost ?>">
-                    <span aria-hidden="true">&raquo;</span>
-                  </a>
-                </li>
-
-
-             <?php } else{ ?>
                   <li class="page-item">
-                  <a class="page-link" href="#">
-                    <span aria-hidden="true">&raquo;</span>
-                  </a>
-                </li>
+                    <a class="page-link" href="index.php?pagina=<?= $pagAnterior ?>">
+                      <span aria-hidden="true">&laquo;</span>
+                    </a>
+                  </li>
+                <?php } else { ?>
+                  <li class="page-item">
+                    <a class="page-link">
+                      <span aria-hidden="true">&laquo;</span>
+                    </a>
+                  </li>
                 <?php } ?>
+
+                <?php for ($i = 1; $i <= $quant_pag; $i++) { ?>
+                  <li class="page-item <?php if ($pag == $i) echo "active"  ?>">
+                    <a class="page-link" href="index.php?pagina=<?= $i ?>">
+                      <?= $i ?>
+                    </a>
+                  </li>
+                <?php }
+                $pagPost = $pag + 1;
+
+                if ($pagPost <= $quant_pag) {
+                ?>
+                  <li class="page-item">
+                    <a class="page-link" href="index.php?pagina=<?= $pagPost ?>">
+                      <span aria-hidden="true">&raquo;</span>
+                    </a>
+                  </li>
+                <?php } else { ?>
+                  <li class="page-item">
+                    <a class="page-link" href="#">
+                      <span aria-hidden="true">&raquo;</span>
+                    </a>
+                  </li>
+                <?php  } ?>
               </ul>
             </nav>
           </div>
-          
-            <!--final  paginação dinamica -->
 
-          <div class="modal fade" id="exampleModa2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h1 class="modal-title fs-5" id="exampleModalLabel">Finalizar Tarefa</h1>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                  Deseja finalizar esta tarefa?
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                  <button type="button" class="btn btn-primary">Sim</button>
-                </div>
-              </div>
-            </div>
-          </div>
+
+
+
+
       </main>
       <footer class="py-4 bg-light mt-auto">
         <div class="container-fluid px-4">
@@ -428,21 +451,18 @@ $result = mysqli_query($conn,$sqlPag);
           </div>
         </div>
       </div>
-
-
     </div>
   </div>
 
   <script>
-    var myModalEl = document.getElementById('exampleModa2')
-    let checkFinalizar = document.getElementsByClassName('form-check-input')
-    myModalEl.addEventListener('hidden.bs.modal', function(event) {
+    function ZerarCheck() {
+      let checkFinalizar = document.getElementsByClassName('form-check-input')
       for (let i = 0; i < checkFinalizar.length; i++) {
         checkFinalizar[i].checked = false
       }
-
-    })
+    }
   </script>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
   <script src="js/scripts.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
