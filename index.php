@@ -67,7 +67,7 @@ if (isset($_GET["idtarefaexc"])) {
 //id do usuario pego na sessão do login
 $id = $_SESSION["idusuario"];
 
-$statusT = (isset($_GET["tfin"])? 1 : 0);
+$statusT = (isset($_GET["tfin"]) &&  $_GET["tfin"] != "")? 1 : 0;
 //Buscar Tarefa pela data
 if (isset($_GET["btnBuscar"])) {
   $dataT = $_GET["dataBuscar"];
@@ -370,7 +370,7 @@ $result = mysqli_query($conn, $sqlPag);
 
                 <?php for ($i = 1; $i <= $quant_pag; $i++) { ?>
                   <li class="page-item <?php if ($pag == $i) echo "active"  ?>">
-                    <a class="page-link" href="index.php?pagina=<?= $i ?>">
+                    <a class="page-link" href="index.php?pagina=<?= $i ?>&tfin=<?= $statusT ?>">
                       <?= $i ?>
                     </a>
                   </li>
