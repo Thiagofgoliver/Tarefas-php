@@ -10,36 +10,34 @@ if (!isset($_SESSION["usuario"])) {
 }
 
 //Alterar senha do usuario - Configurações
-if(isset($_GET["btnsalvarconfig"])){
+if (isset($_GET["btnsalvarconfig"])) {
   $idU = $_GET["idUser"];
   $userN = $_GET["usuario"];
   $senhaA = $_GET["senhaAtual"];
   $novaSenha = $_GET["novaSenha"];
 
-  if(!empty($senhaA) && !empty($novaSenha)){
-    if($senhaA != $novaSenha){
-        $sqlVerificarSenha = "SELECT * FROM tab_usuarios 
+  if (!empty($senhaA) && !empty($novaSenha)) {
+    if ($senhaA != $novaSenha) {
+      $sqlVerificarSenha = "SELECT * FROM tab_usuarios 
         WHERE senha='$senhaA' and idUser='$idU'";
-        $result = mysqli_query($conn,$sqlVerificarSenha);
+      $result = mysqli_query($conn, $sqlVerificarSenha);
 
-        if(mysqli_num_rows($result) > 0){
-          $sqlAltSenha = "UPDATE tab_usuarios 
+      if (mysqli_num_rows($result) > 0) {
+        $sqlAltSenha = "UPDATE tab_usuarios 
           SET senha='$novaSenha'
           WHERE idUser='$idU'";
-          if(mysqli_query($conn,$sqlAltSenha)){
-            header('location:index.php?msg=altsenhaok');
-          }else{
-            header('location:index.php?msg=erroaltsenha4');
-          }
-
-        }else{
-          header('location:index.php?msg=erroaltsenha3');
+        if (mysqli_query($conn, $sqlAltSenha)) {
+          header('location:index.php?msg=altsenhaok');
+        } else {
+          header('location:index.php?msg=erroaltsenha4');
         }
-
-    }else{-
-      header('location:index.php?msg=erroaltsenha2');
+      } else {
+        header('location:index.php?msg=erroaltsenha3');
+      }
+    } else {
+      -header('location:index.php?msg=erroaltsenha2');
     }
-  }else{
+  } else {
     header('location:index.php?msg=erroaltsenha1');
   }
 }
@@ -105,6 +103,11 @@ $id = $_SESSION["idusuario"];
 
 $statusT = (isset($_GET["tfin"]) && $_GET["tfin"] == "1") ? 1 : 0;
 
+$valor = (isset($_GET["tfin"]) ? $_GET["dataBuscar"] : "");
+
+
+
+
 //Buscar Tarefa pela data
 if (isset($_GET["btnBuscar"])) {
   $dataT = $_GET["dataBuscar"];
@@ -126,6 +129,7 @@ $quant_pag = ceil($quantReg / $quant_p_pag);
 $inicio = ($quant_p_pag * $pag) - $quant_p_pag;
 $sqlPag = "SELECT * FROM tab_tarefas 
   WHERE idUsuario='$id' and statusTarefa='$statusT'
+  and prazoTarefa like '$valor%'
   LIMIT $inicio,$quant_p_pag";
 $result = mysqli_query($conn, $sqlPag);
 
@@ -242,19 +246,19 @@ $result = mysqli_query($conn, $sqlPag);
 
           <?php if (isset($_GET["msg"]) && $_GET["msg"] == "erroaltsenha2") { ?>
             <div class="alert alert-danger" role="alert">
-             A nova senha não pode ser igual a senha atual !!!
+              A nova senha não pode ser igual a senha atual !!!
             </div>
           <?php } ?>
 
           <?php if (isset($_GET["msg"]) && $_GET["msg"] == "erroaltsenha3") { ?>
             <div class="alert alert-danger" role="alert">
-             A senha atual está incorreta !!!
+              A senha atual está incorreta !!!
             </div>
           <?php } ?>
 
           <?php if (isset($_GET["msg"]) && $_GET["msg"] == "erroaltsenha4") { ?>
             <div class="alert alert-danger" role="alert">
-             Erro ao efetuar atualização no banco !!!
+              Erro ao efetuar atualização no banco !!!
             </div>
           <?php } ?>
 
@@ -263,6 +267,11 @@ $result = mysqli_query($conn, $sqlPag);
               Senha alterada com sucesso !!!
             </div>
           <?php } ?>
+
+
+
+
+
 
           <ol class="breadcrumb mb-4">
           </ol>
@@ -291,10 +300,37 @@ $result = mysqli_query($conn, $sqlPag);
                 $modalAtualizar = "modalAtualizar" . $linha["id"];
                 $modalDeletar = "modalDeletar" . $linha["id"];
                 $modalFinalizar = "modalFinalizar" . $linha["id"];
+                $dataTarefa = new DateTime($linha["prazoTarefa"]);
+                $dataAtual = new DateTime('now');
+
+                $dataTformat = $dataTarefa->format('d/m/Y H:i');
+
+
+
+
+
+
               ?>
                 <tr class="<?php if ($statusT == 1) {
                               echo "table-success";
-                            } ?>">
+                            } else {
+
+                              if ($linha["priorTarefa"] == 1) {
+                                echo "table-primary";
+                              }
+
+                              if ($linha["priorTarefa"] == 2) {
+                                echo "table-warning";
+                              }
+
+                              if ($linha["priorTarefa"] == 3) {
+                                echo "table-danger";
+                              }
+                            }
+
+
+
+                            ?>">
                   <th style="cursor:pointer" data-bs-toggle="modal" data-bs-target="#<?php echo $modalAtualizar ?>">
                     <i class="fa-solid fa-pen" style="color: #236c1e;"></i>
                   </th>
@@ -303,7 +339,9 @@ $result = mysqli_query($conn, $sqlPag);
                   </th>
                   <td><?php echo $linha["nomeTarefa"] ?></td>
                   <td><?php echo $linha["descTarefa"] ?></td>
-                  <td><?php echo $linha["prazoTarefa"] ?></td>
+
+
+                  <td><?php echo  $dataTformat ?></td>
                   <td><?php
                       if ($linha["priorTarefa"] == 1) {
                         echo "Baixa";
