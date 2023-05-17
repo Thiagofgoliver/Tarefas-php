@@ -1,0 +1,18 @@
+ERRO 1 no painel na parte cadastro de tarefa ao clicar ele redireciona para aba tarefas concluidas
+
+
+ERRO 2  na tela de tarefas finalizadas ainda tem o botao de incluir tarefa isso não tão util por estar na aba de finalizar tarefa
+
+
+ERRO 3 AO DEFINIR DATA DA TAREFA não deixar colocar data anterior só datas presentes e posteriores nunca anteriores.
+
+ERRO 4 TELA DE CONFIGURAÇÃO DE USUARIO MOSTRA O ID E QUANDO TROCA A SENHA ELE MOSTRA E NÃO ACHO TÃO SEGURO, MINHA PROPROSTA SERIA COLOCAR , 
+ALGO PARA OCULTAR A SENHA EM CARACTERES DE *******
+
+NA TELA DE LOGIN ADICIONAR A FUNÇÃO ESQUECI MEU USUARIO E SENHA,
+DESSA FORMA SE O USUARIO PERDER SUAS CREDENCIAIS ELE CONSEGUE RECUPERAR COM ALGUMAS CONFIRMAÇÕES.
+
+AO TESTAR O SISTEMA NA ABA INCLUIR TAREFAS,
+NOTAMOS UM TRAVEMENTO AO DIGITAR MILHARES DE CARACTERES,
+POR ISSO A PROPOSTA SERIA COLOCAR UM LIMITAÇÃO DE CARACTERES A SEREM DIGITADOS. 
+

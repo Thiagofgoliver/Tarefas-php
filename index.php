@@ -149,7 +149,14 @@ $result = mysqli_query($conn, $sqlPag);
   <title>Tarefas - Senac</title>
   <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" />
   <link href="css/styles.css" rel="stylesheet" />
+  <!-- Biblioteca de ícones -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css"
+      integrity="sha512-SzlrxWUlpfuzQ+pcUCosxcglQRNAq/DZjVsC0lE40xsADsfeQoEypE+enwcOiGjk/bSuGGKHEyjSoQ1zVisanQ=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+
   <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
+
+
 </head>
 
 <body class="sb-nav-fixed">
@@ -312,19 +319,19 @@ $result = mysqli_query($conn, $sqlPag);
 
               ?>
                 <tr class="<?php if ($statusT == 1) {
-                              echo "table-success";
+                              echo "table-dark";
                             } else {
 
                               if ($linha["priorTarefa"] == 1) {
-                                echo "table-primary";
+                                echo "bg-primary  bg-opacity-25" ;
                               }
 
                               if ($linha["priorTarefa"] == 2) {
-                                echo "table-warning";
+                                echo "bg-warning bg-opacity-25";
                               }
 
                               if ($linha["priorTarefa"] == 3) {
-                                echo "table-danger";
+                                echo "bg-danger  bg-opacity-25";
                               }
                             }
 
@@ -517,7 +524,19 @@ $result = mysqli_query($conn, $sqlPag);
       <footer class="py-4 bg-light mt-auto">
         <div class="container-fluid px-4">
           <div class="d-flex align-items-center justify-content-between small">
-            <div class="text-muted">Copyright &copy; Website 2023</div>
+            <div class="text-muted"> &copy;THIAGO FELIPE 2023 TODO DIREITO RESERVADO 
+
+            <P>SIGA-ME NAS REDES SOCIAIS :</P> <a href="https://github.com/Thiagofgoliver">
+              <i class="fa-brands fa-github fa-2x"></i></a>
+
+              <a href="https://encurtador.com.br/jBU15"> <i class="fa-brands fa-linkedin fa-2x"></i></a>
+
+
+            </div>
+           
+            
+            
+            
 
           </div>
         </div>
