@@ -1,26 +1,37 @@
 <?php
-session_start();
 include('conn.php');
 include('funcoes.php');
 
-if (isset($_POST["btnAcessar"])) {
-    $usuario = testar_valor($_POST["usuario"]);
+if (isset($_POST["btnCadastrar"])) {
+    $nUser = testar_valor($_POST["usuario"]);
     $senha = testar_valor($_POST["senha"]);
+    $senhaC = testar_valor($_POST["senhaConfirm"]);
 
-    $sqlLogin = "SELECT * FROM tab_usuarios
-   WHERE usuario='$usuario' and senha='$senha'";
-    $result = mysqli_query($conn, $sqlLogin);
-    $quantReg = mysqli_num_rows($result);
-    if ($quantReg > 0) {
-        $_SESSION["usuario"] = "$usuario";
-        while ($linha = mysqli_fetch_assoc($result)) {
-            $_SESSION["idusuario"] = $linha["idUser"];
+    if (!empty($nUser) && !empty($senha) && !empty($senhaC)) {
+        if ($senha == $senhaC) {
+            $sqlUser = "SELECT * FROM tab_usuarios
+        WHERE usuario = '$nUser'";
+            $result = mysqli_query($conn, $sqlUser);
+
+            if (mysqli_num_rows($result) == 0) {
+                $sqlInserir = "INSERT INTO tab_usuarios(usuario,senha)
+            VALUES('$nUser','$senha')";
+                if (mysqli_query($conn, $sqlInserir)) {
+                    header('location:login.php?msg=cadok');
+                } else {
+                    header('location:cadastrar.php?msg=erro3');
+                }
+            } else {
+                header('location:cadastrar.php?msg=erro2');
+            }
+        } else {
+            header('location:cadastrar.php?msg=erro1');
         }
-        header('location:index.php');
     } else {
-        header('location:login.php?msg=loginerro');
+        header('location:cadastrar.php?msg=erro0');
     }
 }
+
 
 ?>
 
@@ -181,23 +192,27 @@ if (isset($_POST["btnAcessar"])) {
     </div>
     <form method="post">
 
-        <h3>Sistema Tarefas</h3>
+        <h3>Novo usuario</h3>
 
-        <?php if (isset($_GET["msg"]) && $_GET["msg"] == "cadok") { ?>
+        <?php if (isset($_GET["msg"]) && $_GET["msg"] == "erro0") { ?>
             <p style="color: #ff512f;text-align: center;">
-                Usuário criado !!!
+                Preencha todos os campos !!!
+            </p>
+        <?php } ?>
+        <?php if (isset($_GET["msg"]) && $_GET["msg"] == "erro1") { ?>
+            <p style="color: #ff512f;text-align: center;">
+                Senhas não conferem !!!
+            </p>
+        <?php } ?>
+        <?php if (isset($_GET["msg"]) && $_GET["msg"] == "erro2") { ?>
+            <p style="color: #ff512f;text-align: center;">
+                Usuário ja existe !!!
             </p>
         <?php } ?>
 
-        <?php if (isset($_GET["msg"]) && $_GET["msg"] == "loginerro") { ?>
+        <?php if (isset($_GET["msg"]) && $_GET["msg"] == "erro3") { ?>
             <p style="color: #ff512f;text-align: center;">
-                Usuario ou senha invalidos!!!
-            </p>
-        <?php } ?>
-
-        <?php if (isset($_GET["msg"]) && $_GET["msg"] == "userna") { ?>
-            <p style="color: #ff512f;text-align: center;">
-                Usuario não autenticado!!!
+                Erro ao cadastrar novo usuário !!!
             </p>
         <?php } ?>
 
@@ -207,8 +222,10 @@ if (isset($_POST["btnAcessar"])) {
         <label for="password">Senha</label>
         <input type="password" placeholder="Senha" id="password" name="senha">
 
-        <button type="submit" name="btnAcessar">Acessar</button>
-        <button><a href="cadastrar.php" style="color: #080710;">Criar uma conta</a></button>
+        <label for="password">Confirmação de Senha</label>
+        <input type="password" placeholder="Senha" id="password" name="senhaConfirm">
+
+        <button type="submit" name="btnCadastrar">Cadastrar Usuario</button>
 
     </form>
 </body>
