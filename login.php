@@ -25,7 +25,7 @@ if (isset($_POST["btnAcessar"])) {
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 
 <head>
     <!-- Design by foolishdeveloper.com -->

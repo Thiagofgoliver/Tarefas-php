@@ -182,6 +182,14 @@ $result = mysqli_query($conn, $sqlPag);
               <nav class="sb-sidenav-menu-nested nav">
                 <a class="nav-link" href="">Cadastro de Tarefas</a>
                 <a class="nav-link" href="index.php?tfin=1">Tarefas concluídas</a>
+
+                <a class="nav-link" href="relatorio.php">Relatorio de Tarefas</a>
+
+                <a class="nav-link" href="tarefasfinalizadas.php">tarefa finalizadas</a>
+
+                <a class="nav-link" href="tarefasEmAberto.php">tarefas em aberto</a>
+
+
               </nav>
             </div>
           </div>
@@ -381,11 +389,12 @@ $result = mysqli_query($conn, $sqlPag);
                         <form class="form-group text-white">
                           <div class="mb-3">
                             <label class="form-label text-dark">Id da Tarefa</label>
-                            <input type="text" class="form-control" name="idtarefa" readonly value="<?php echo $linha["id"] ?>">
+                            <input type="text" class="form-control" name="idtarefa" 
+                            readonly value="<?php echo $linha["id"] ?>">
                           </div>
                           <div class="mb-3">
                             <label class="form-label text-dark">Nome da Tarefa</label>
-                            <input type="text" class="form-control" name="nometarefa" value="<?php echo $linha["nomeTarefa"] ?>">
+                            <input type="text" class="form-control" name="nometarefa"  value="<?php echo $linha["nomeTarefa"] ?>">
                           </div>
                           <div class="mb-3">
                             <label class="form-label text-dark">Descrição da tarefa</label> <textarea class="form-control" name="descricao" rows="3"> <?php echo $linha["descTarefa"] ?></textarea>
@@ -555,10 +564,11 @@ $result = mysqli_query($conn, $sqlPag);
               <form class="form-group text-white" action="model.php">
                 <div class="mb-3">
                   <label class="form-label text-dark">Nome da Tarefa</label>
-                  <input type="text" class="form-control" name="nometarefa">
+                  <input type="text" class="form-control" name="nometarefa" maxlength="50">
                 </div>
                 <div class="mb-3">
-                  <label class="form-label text-dark">Descrição da tarefa</label> <textarea class="form-control" name="descricao" rows="3"></textarea>
+                  <label class="form-label text-dark">Descrição da tarefa</label> 
+                  <textarea class="form-control" name="descricao" rows="3" maxlength="200"></textarea>
                 </div>
                 <div class="row">
                   <div class="mb-3 col-6">
