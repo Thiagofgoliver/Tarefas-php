@@ -4,15 +4,24 @@ require 'vendor/autoload.php';
 include 'conn.php';
 
 $idU = $_SESSION["idusuario"];
+$nomeUsuario =$_SESSION["usuario"];
 
-$htmlRel ="<h1>tarefas  finalizadas</h1>";
-$sqlTarefasfinalizadas = "SELECT * FROM tab_tarefas WHERE idUsuario='$idU'";
-$result = mysqli_query($conn,$sqlTarefasfinalizadas);
+
+$sqlRelatorio = "SELECT * FROM tab_tarefas WHERE idUsuario='$idU'AND
+statusTarefa = '1'
+";
+$result = mysqli_query($conn,$sqlRelatorio);
+$quantidade = mysqli_num_rows($result);
+
+
+$htmlRel ="<h1>RELATORIO DE TAREFAS FINALIZADAS</h1>
+<br> <h2> NOME DO USUARIO : $nomeUsuario</h2><br>
+<h3>Quantidade de tarefas :$quantidade</h3><br>";
+
 while($linha = mysqli_fetch_assoc($result)){
     $nome = $linha["nomeTarefa"];
     $desc = $linha["descTarefa"];
     $praz = $linha ["prazoTarefa"];
-    $sqlTarefasfinalizadas =["Finalizadas"];
     if ($linha["priorTarefa"] ==1){
         $prior ="Baixa";
 
@@ -25,21 +34,18 @@ while($linha = mysqli_fetch_assoc($result)){
 
 
     }
-    if($linha ["statusTarefa"]==1){
-        $status = "Tarefa Finalizada";
-
-    }else{
-        $status = "tarefa finalizada";
-    }
-
+    
         
+   
 
     $htmlRel .="  <strong>  nome da Tarefa </strong> :$nome <br> -
     <strong> descrição :</strong>$desc <br> -
     <strong> prazo tarefa : </strong>  $praz -
-    <strong> :</strong>: $prior -
-    <strong> status : </strong>  $status
+    <strong> </strong>: $prior 
+   
      <br>"; 
+
+
 
 
 
@@ -68,3 +74,4 @@ $dompdf->stream(
 );
 
 ?>
+

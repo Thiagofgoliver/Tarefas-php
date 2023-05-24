@@ -185,9 +185,16 @@ $result = mysqli_query($conn, $sqlPag);
 
                 <a class="nav-link" href="relatorio.php">Relatorio de Tarefas</a>
 
-                <a class="nav-link" href="tarefasfinalizadas.php">tarefa finalizadas</a>
+                <a class="nav-link" href="tarefasfinalizadas.php">relatorio tarefa finalizadas</a>
 
-                <a class="nav-link" href="tarefasEmAberto.php">tarefas em aberto</a>
+                <a class="nav-link" href="tarefasEmAberto.php">relatorio de tarefas em aberto</a>
+
+                <a class="nav-link" href="reltarefasdia.php">relatorio de tarefas do dia</a>
+
+
+                <a class="nav-link" href="tarefasSemana.php">relatorio de tarefas da semana</a>
+
+
 
 
               </nav>
